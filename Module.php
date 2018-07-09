@@ -12,7 +12,7 @@ namespace Aurora\Modules\CorporateCalendar;
  *
  * @package Modules
  */
-class Module extends \Aurora\System\Module\AbstractModule
+class Module extends \Aurora\System\Module\AbstractLicensedModule
 {
 	public $oApiCalendarManager = null;
 	
@@ -72,6 +72,4 @@ class Module extends \Aurora\System\Module\AbstractModule
 		}
 		return $this->oApiCalendarManager->updateCalendarShares($sUserPublicId, $Id, $aShares);
 	}		
-	
-	
 }

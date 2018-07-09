@@ -26,7 +26,7 @@ class Module extends \Aurora\System\Module\AbstractModule
 		\Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 		
 		return array(
-			'AllowShare' => $this->getConfig('AllowShare', false)
+			'AllowShare' => $this->getConfig('AllowShare', true)
 		);
 	}	
 	

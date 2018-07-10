@@ -19,6 +19,7 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 	public function init() 
 	{
 		$this->oApiCalendarManager = new \Aurora\Modules\Calendar\Manager($this);
+		$this->subscribeEvent('Calendar::GetCalendars::after', array($this, 'onAfterGetCalendars'));
 	}	
 	
 	public function GetSettings()
@@ -71,5 +72,40 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 			);
 		}
 		return $this->oApiCalendarManager->updateCalendarShares($sUserPublicId, $Id, $aShares);
-	}		
+	}
+
+	public function onAfterGetCalendars($aData, &$oResult)
+	{
+		if (isset($aData['UserId']) && isset($oResult['Calendars']))
+		{
+			$oUser = \Aurora\System\Api::getUserById($aData['UserId']);
+			if ($oUser)
+			{
+				$mCalendars = $this->oApiCalendarManager->getSharedCalendars($oUser->PublicId);
+				if (is_array($mCalendars))
+				{
+					foreach ($mCalendars as $CalendarKey => $oCalendar)
+					{
+						foreach ($oCalendar->Shares as $ShareKey => $aShare)
+						{
+							if ($aShare['email'] === $this->oApiCalendarManager->getTenantUser())
+							{
+								if (!$oCalendar->SharedToAll)
+								{
+									$mCalendars[$CalendarKey]->Shared = true;
+									$mCalendars[$CalendarKey]->SharedToAll = true;
+								}
+								else if ($oUser->PublicId === $oCalendar->Owner)
+								{
+									unset($mCalendars[$CalendarKey]);
+								}
+								unset($oCalendar->Shares[$ShareKey]);
+							}
+						}
+					}
+					$oResult['Calendars'] = array_merge($oResult['Calendars'], $mCalendars);
+				}
+			}
+		}
+	}
 }

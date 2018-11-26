@@ -14,11 +14,20 @@ namespace Aurora\Modules\CorporateCalendar;
  */
 class Module extends \Aurora\System\Module\AbstractLicensedModule
 {
-	public $oApiCalendarManager = null;
+	public $oManager = null;
+
+	public function getManager()
+	{
+		if ($this->oManager === null)
+		{
+			$this->oManager = new \Aurora\Modules\Calendar\Manager($this);
+		}
+
+		return $this->oManager;
+	}	
 	
 	public function init() 
 	{
-		$this->oApiCalendarManager = new \Aurora\Modules\Calendar\Manager($this);
 		$this->subscribeEvent('Calendar::GetCalendars::after', array($this, 'onAfterGetCalendars'));
 	}	
 	
@@ -51,14 +60,14 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 		if ($ShareToAll)
 		{
 			$aShares[] = array(
-				'email' => $this->oApiCalendarManager->getTenantUser(),
+				'email' => $this->getManager()->getTenantUser(),
 				'access' => $ShareToAllAccess
 			);
 		}
 		else
 		{
 			$aShares[] = array(
-				'email' => $this->oApiCalendarManager->getTenantUser(),
+				'email' => $this->getManager()->getTenantUser(),
 				'access' => \Aurora\Modules\Calendar\Enums\Permission::RemovePermission
 			);
 		}
@@ -67,11 +76,11 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 		if ($IsPublic)
 		{
 			$aShares[] = array(
-				'email' => $this->oApiCalendarManager->getPublicUser(),
+				'email' => $this->getManager()->getPublicUser(),
 				'access' => \Aurora\Modules\Calendar\Enums\Permission::Read
 			);
 		}
-		return $this->oApiCalendarManager->updateCalendarShares($sUserPublicId, $Id, $aShares);
+		return $this->getManager()->updateCalendarShares($sUserPublicId, $Id, $aShares);
 	}
 
 	public function onAfterGetCalendars($aData, &$oResult)
@@ -81,14 +90,14 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 			$oUser = \Aurora\System\Api::getUserById($aData['UserId']);
 			if ($oUser)
 			{
-				$mCalendars = $this->oApiCalendarManager->getSharedCalendars($oUser->PublicId);
+				$mCalendars = $this->getManager()->getSharedCalendars($oUser->PublicId);
 				if (is_array($mCalendars))
 				{
 					foreach ($mCalendars as $CalendarKey => $oCalendar)
 					{
 						foreach ($oCalendar->Shares as $ShareKey => $aShare)
 						{
-							if ($aShare['email'] === $this->oApiCalendarManager->getTenantUser())
+							if ($aShare['email'] === $this->getManager()->getTenantUser())
 							{
 								if (!$oCalendar->SharedToAll)
 								{

@@ -4,7 +4,7 @@
 	"require": {
 		"php": ">=5.4.0",
 		"afterlogic/aurora-framework": "~0.10.0",
-		"afterlogic/aurora-module-calendar": "~0.10.0"
+		"afterlogic/aurora-module-calendar": "dev-sabre-dav-4"
 	},
 	"extra": {
 		"installer-name": "CorporateCalendar"

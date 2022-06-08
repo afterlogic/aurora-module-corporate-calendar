@@ -1,10 +1,18 @@
 {
-	"Disabled": [
-		false,
-		"bool"
-	],
-	"AllowShare": [
-		true,
-		"bool"
-	]	
+  "Disabled": [
+    false,
+    "bool"
+  ],
+  "Disabled_Description": [
+    "",
+    "string"
+  ],
+  "AllowShare": [
+    true,
+    "bool"
+  ],
+  "AllowShare_Description": [
+    "",
+    "string"
+  ]
 }

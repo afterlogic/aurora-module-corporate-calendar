@@ -30,6 +30,15 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
         $this->subscribeEvent('Calendar::GetCalendars::after', array($this, 'onAfterGetCalendars'));
     }
 
+    /**
+     *
+     * @return Module
+     */
+    public static function Decorator()
+    {
+        return parent::Decorator();
+    }
+
     public function GetSettings()
     {
         \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);

@@ -39,6 +39,15 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
         return parent::Decorator();
     }
 
+    /**
+     *
+     * @return Settings
+     */
+    protected function GetModuleSettings()
+    {
+        return $this->oModuleSettings;
+    }
+
     public function GetSettings()
     {
         \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);

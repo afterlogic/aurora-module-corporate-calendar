@@ -10,6 +10,8 @@ namespace Aurora\Modules\CorporateCalendar;
  * @license https://afterlogic.com/products/common-licensing Afterlogic Software License
  * @copyright Copyright (c) 2023, Afterlogic Corp.
  *
+ * @property Settings $oModuleSettings
+ *
  * @package Modules
  */
 class Module extends \Aurora\System\Module\AbstractLicensedModule
@@ -53,7 +55,7 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
         \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
 
         return array(
-            'AllowShare' => $this->getConfig('AllowShare', true)
+            'AllowShare' => $this->oModuleSettings->AllowShare
         );
     }
 

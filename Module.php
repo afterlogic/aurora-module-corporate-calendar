@@ -93,26 +93,50 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 				$mCalendars = $this->getManager()->getSharedCalendars($oUser->PublicId);
 				if (is_array($mCalendars))
 				{
+					// Storage of the filtered calendar by ID + its original key
+					$filteredCalendars = [];        // Id → calendar
+					$filteredKeys = [];             // Id → original array key
+
 					foreach ($mCalendars as $CalendarKey => $oCalendar)
 					{
 						foreach ($oCalendar->Shares as $ShareKey => $aShare)
 						{
 							if ($aShare['email'] === $this->getManager()->getTenantUser())
 							{
-								if (!$oCalendar->SharedToAll)
-								{
-									$mCalendars[$CalendarKey]->Shared = true;
-									$mCalendars[$CalendarKey]->SharedToAll = true;
+								if (!$oCalendar->SharedToAll) {
+									$oCalendar->Shared = true;
+									$oCalendar->SharedToAll = true;
+								} elseif ($oUser->PublicId === $oCalendar->Owner) {
+									// Skip the calendar
+									continue 2;
 								}
-								else if ($oUser->PublicId === $oCalendar->Owner)
-								{
-									unset($mCalendars[$CalendarKey]);
-								}
+
 								unset($oCalendar->Shares[$ShareKey]);
 							}
 						}
+
+						// Now decide if this calendar is the best one for its ID
+						$id = $oCalendar->IntId;
+
+						if (!isset($filteredCalendars[$id])) {
+							// First time we see this ID
+							$filteredCalendars[$id] = $oCalendar;
+							$filteredKeys[$id] = $CalendarKey;
+						} else {
+							// Compare access levels
+							if ($oCalendar->Access < $filteredCalendars[$id]->Access) {
+								// New one is better — replace calendar and key
+								$filteredCalendars[$id] = $oCalendar;
+								$filteredKeys[$id] = $CalendarKey;
+							}
+						}
 					}
-					$oResult['Calendars'] = array_merge($oResult['Calendars'], $mCalendars);
+
+					// Compose final result array
+					// Save original keys
+					foreach ($filteredCalendars as $id => $calendar) {
+						$oResult['Calendars'][$filteredKeys[$id]] = $calendar;
+					}
 				}
 			}
 		}

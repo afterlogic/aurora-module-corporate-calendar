@@ -58,7 +58,7 @@ class Module extends \Aurora\System\Module\AbstractLicensedModule
 
     public function GetSettings()
     {
-        \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::Anonymous);
+        \Aurora\System\Api::checkUserRoleIsAtLeast(\Aurora\System\Enums\UserRole::NormalUser);
 
         return array(
             'AllowShare' => $this->oModuleSettings->AllowShare
